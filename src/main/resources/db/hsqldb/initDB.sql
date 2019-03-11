@@ -10,7 +10,7 @@ CREATE TABLE questions (
   question  VARCHAR(250),
   no_of_choices INTEGER,
   answer VARCHAR(40),
-  options VARCHAR(40) ARRAY[10]
+  options VARCHAR(900) 
 );
 
 CREATE TABLE answers (
@@ -18,7 +18,7 @@ CREATE TABLE answers (
   qid INTEGER,
   uid  INTEGER,
   answer VARCHAR(40),
-  user_answers VARCHAR(40) ARRAY[10]
+  user_answers VARCHAR(900) 
 );
 
 

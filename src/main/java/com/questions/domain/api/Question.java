@@ -2,8 +2,10 @@ package com.questions.domain.api;
 
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -24,17 +26,19 @@ private String question;
 
 @Id
    @GeneratedValue
-  
+   @Column(name = "id")
     private Long id;
+@Column(name = "Type")
 	private String type;
-
+@Column(name = "no_of_choices")
 	private int noOfChoices;
-
+@Column(name = "answer")
 	private String answer;
 	
-	 @ElementCollection
-	private List<String> options;
-	public Question(String question, String type, int noOfChoices, String answer, List<String> options) {
+	
+	 @Column(name = "options")
+	private String options;
+	public Question(String question, String type, int noOfChoices, String answer, String options) {
 		this.question = question;
 		this.type = type;
 		this.noOfChoices = noOfChoices;

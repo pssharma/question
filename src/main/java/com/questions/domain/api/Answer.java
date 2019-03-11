@@ -11,10 +11,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotEmpty;
 import javax.jdo.annotations.Index;
 
 import org.springframework.stereotype.Indexed;
 
+import lombok.Builder;
 import lombok.Data;
 
 @Data
@@ -22,21 +24,29 @@ import lombok.Data;
 @Table(name ="answers")
 //@Index(members={"qid","uid"})
 public class Answer {
-	private @Id @GeneratedValue Long id;
+	private @Id @GeneratedValue  @Column(name = "id")
+	Long id;
 	
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name="qid")
+	//@OneToOne(cascade = CascadeType.ALL)
+	//@JoinColumn(name="qid")
+	@NotEmpty
+	@Column(name="qid")
 	private Long qid;
 	
+	@NotEmpty
+	@Column(name="uid")
 	private Long uid;
 	
-	@ElementCollection
-	private List<String> userAnswers;
+	
+	@Column(name="user_answers")
+	private String userAnswers;
 
+	@Column(name="answer")
 	private String correctAnswer;
 	
-	public Answer(Long qid,Long uid,List<String> userAnswers,String correctAnswer) {
-		this.correctAnswer = correctAnswer;
+	@Builder
+	public Answer(Long qid,Long uid,String userAnswers) {
+		//this.correctAnswer = correctAnswer;
 		this.userAnswers = userAnswers;
 		this.uid = uid;
 		this.qid = qid;
