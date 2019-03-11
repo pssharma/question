@@ -19,7 +19,7 @@ public class AnswerResourceAssembler implements ResourceAssembler<Answer, Resour
 	@Override
 	public Resource<Answer> toResource(Answer entity) {
 		
-		 Resource<Answer> answerResource = new Resource<>(entity,
+		 return new Resource<>(entity,
 				linkTo(methodOn(AnswerController.class).one(entity.getId())).withSelfRel(),
 				linkTo(methodOn(AnswerController.class).all()).withRel("employees"));
 		 

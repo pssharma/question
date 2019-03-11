@@ -1,6 +1,7 @@
 package com.questions.domain.controllers;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.transaction.Status;
@@ -67,39 +68,54 @@ public class AnswerController {
 	public ResponseEntity<Resource<Answer>> newAnswer(@RequestBody Answer answer) {
 
 	
-		Answer newAnswer = answerRepository.save(answer);
+		//Answer newAnswer = answerRepository.save(answer);
 		boolean correctAnswer = false;
+		
+		//checking if answer already exists
+		Optional<Answer> newAnswer = answerRepository.findByQidAndUid(answer.getQid(), answer.getUid());
+		
+		if(newAnswer.isPresent()) {
+		
+		Answer answerNew = newAnswer.get();
+		answer.setId(answerNew.getId());
+		
+	
 		//checking if the answer is for trivia.
-		Question question = questionRepository.getOne(newAnswer.getQuestion().getId());
+			
+		Question question = questionRepository.getOne(newAnswer.get().getQid());
 		if(question.getType().equals("trivia")) {
 			//assuming we will filter only one option for trivia on frontend
-			if(answer.getUserAnswers().get(0).equalsIgnoreCase(question.getAnswer())) {
-				correctAnswer = true;
+			answer.setCorrectAnswer(question.getAnswer());	
 			}
+		answerRepository.save(answer);
+		
 		}
 
 		return ResponseEntity
-			.created(linkTo(methodOn(AnswerController.class).one(newAnswer.getId())).toUri())
-			//.body(answerResourceAssembler.toResource(newAnswer))
-			.body("");
+			.created(linkTo(methodOn(AnswerController.class).one(answer.getId())).toUri())
+			.body(answerResourceAssembler.toResource(answer));
+			
 		
 	}
 	
-	@PutMapping("/answers/{id}/submit")
-	ResponseEntity<ResourceSupport> submit(@PathVariable Long id) {
-
-		 Answer answer = answerRepository.findById(id).orElseThrow(() -> new AnswerNotFoundException(id));
- //logging for updating
-			
-				
-				return ResponseEntity.ok(answerResourceAssembler.toResource(answerRepository.save(answer)));
-			
-
-			return ResponseEntity
-				.status(HttpStatus.METHOD_NOT_ALLOWED)
-				.body(new VndErrors.VndError("Method not allowed", "You can't complete the submission that is in the " + answer.getStatus() + " status"));
-	}
-	
+	/*
+	 * @PutMapping("/answers/{id}/submit") ResponseEntity<ResourceSupport>
+	 * submit(@PathVariable Long id) {
+	 * 
+	 * Answer answer = answerRepository.findById(id).orElseThrow(() -> new
+	 * AnswerNotFoundException(id)); //logging for updating
+	 * 
+	 * 
+	 * return
+	 * ResponseEntity.ok(answerResourceAssembler.toResource(answerRepository.save(
+	 * answer)));
+	 * 
+	 * 
+	 * return ResponseEntity .status(HttpStatus.METHOD_NOT_ALLOWED) .body(new
+	 * VndErrors.VndError("Method not allowed",
+	 * "You can't complete the submission that is in the " + answer.getStatus() +
+	 * " status")); }
+	 */
 	
 
 }
