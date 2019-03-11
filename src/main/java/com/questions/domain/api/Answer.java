@@ -16,12 +16,18 @@ import javax.jdo.annotations.Index;
 
 import org.springframework.stereotype.Indexed;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Data
 @Entity
 @Table(name ="answers")
+@AllArgsConstructor
+@NoArgsConstructor
+//@RequiredArgsConstructor
 //@Index(members={"qid","uid"})
 public class Answer {
 	private @Id @GeneratedValue  @Column(name = "id")
@@ -44,9 +50,9 @@ public class Answer {
 	@Column(name="answer")
 	private String correctAnswer;
 	
-	@Builder
-	public Answer(Long qid,Long uid,String userAnswers) {
-		//this.correctAnswer = correctAnswer;
+	//@Builder
+	public Answer(Long qid,Long uid,String userAnswers,String correctAnswer) {
+		this.correctAnswer = correctAnswer;
 		this.userAnswers = userAnswers;
 		this.uid = uid;
 		this.qid = qid;

@@ -1,5 +1,6 @@
 package com.questions.domain.controllers;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.questions.domain.Exceptions.AnswerNotFoundException;
@@ -64,22 +67,24 @@ public class AnswerController {
 				.orElseThrow(() -> new AnswerNotFoundException(id)));
 	}
 
-	@PostMapping("/answers")
+	@RequestMapping(value="/answers",headers="Accept=application/json", method=RequestMethod.POST)
 	public ResponseEntity<Resource<Answer>> newAnswer(@RequestBody Answer answer) {
 
 	
 		//Answer newAnswer = answerRepository.save(answer);
-		boolean correctAnswer = false;
+		//boolean correctAnswer = false;
 		
 		//checking if answer already exists
+		Answer answerNew = new Answer(answer.getId(),answer.getQid(),answer.getUid(),answer.getUserAnswers(),"");
+		
 		Optional<Answer> newAnswer = answerRepository.findByQidAndUid(answer.getQid(), answer.getUid());
+	
 		
 		if(newAnswer.isPresent()) {
 		
-		Answer answerNew = newAnswer.get();
-		answer.setId(answerNew.getId());
-		
-	
+		answerNew = newAnswer.get();
+		answerNew.setUserAnswers(answer.getUserAnswers());
+
 		//checking if the answer is for trivia.
 			
 		Question question = questionRepository.getOne(newAnswer.get().getQid());
@@ -87,14 +92,19 @@ public class AnswerController {
 			//assuming we will filter only one option for trivia on frontend
 			answer.setCorrectAnswer(question.getAnswer());	
 			}
-		answerRepository.save(answer);
+		
+		answerRepository.save(answerNew);
 		
 		}
-
+		
+		/*else {
+			answerNew = new Answer(answer.getId(),answer.getQid(),answer.getUid(),answer.getUserAnswers(),"");
+			answerRepository.save(answerNew);
+		}*/
+		
 		return ResponseEntity
-			.created(linkTo(methodOn(AnswerController.class).one(answer.getId())).toUri())
-			.body(answerResourceAssembler.toResource(answer));
-			
+				.created(linkTo(methodOn(AnswerController.class).one(answerNew.getId())).toUri())
+				.body(answerResourceAssembler.toResource(answerNew));
 		
 	}
 	

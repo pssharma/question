@@ -44,15 +44,18 @@ class AnswerControllerTest {
 
 
 	@Test
-	void testNewAnswer() {
+	void testNewAnswer() throws Exception {
 		
-		Answer Answer1 = new Answer(1L,2L,"Blue");
+		Answer Answer1 = new Answer(1L,2L,"Blue",null);
 		Answer1.setId(1L);
-		Answer Answer2 = new Answer(Answer1.getQid(),Answer1.getUid(),"Green");
+		Answer Answer2 = new Answer(Answer1.getQid(),Answer1.getUid(),"Green",null);
 		Answer2.setId(2L);
 		answerController.newAnswer(Answer1);
 		answerController.newAnswer(Answer2);
-		assertEquals(1, answerRepository.findAll());
+		 mockMvc.perform(get("/answers/")
+	                .contentType(MediaType.APPLICATION_JSON))
+	                .andExpect(status().isOk())
+	                .andExpect(jsonPath("$.questions", hasSize(1)));
 
         
 

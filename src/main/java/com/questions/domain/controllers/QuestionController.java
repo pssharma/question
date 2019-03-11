@@ -42,10 +42,10 @@ public class QuestionController {
 			linkTo(methodOn(QuestionController.class).all()).withSelfRel());
 	}
 	
-	@PostMapping("/questions")
-	public Question question1(@RequestBody Question question1) {
-		return questionRepository.save(question1);
-	}
+	/*
+	 * @PostMapping("/questions") public Question question1(@RequestBody Question
+	 * question1) { return questionRepository.save(question1); }
+	 */
 	
 	@GetMapping("/questions/{id}")
 	public Resource<Question> one(@PathVariable Long id) {
