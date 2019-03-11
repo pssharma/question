@@ -21,10 +21,10 @@ CREATE TABLE answers (
   user_answers VARCHAR(900) 
 );
 
-
-
-
 ALTER TABLE answers ADD CONSTRAINT fk_questions FOREIGN KEY (qid) REFERENCES questions(id);
+
+
+
 
 
 CREATE  TABLE users (

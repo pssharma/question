@@ -14,13 +14,14 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 import javax.jdo.annotations.Index;
 
-import org.springframework.stereotype.Indexed;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+
 
 @Data
 @Entity
@@ -30,16 +31,18 @@ import lombok.RequiredArgsConstructor;
 //@RequiredArgsConstructor
 //@Index(members={"qid","uid"})
 public class Answer {
-	private @Id @GeneratedValue  @Column(name = "id")
-	Long id;
+	@Id 
+	@GeneratedValue  
+	@Column(name = "id")
+	 private Long id;
 	
 	//@OneToOne(cascade = CascadeType.ALL)
 	//@JoinColumn(name="qid")
-	@NotEmpty
+
 	@Column(name="qid")
 	private Long qid;
 	
-	@NotEmpty
+	
 	@Column(name="uid")
 	private Long uid;
 	

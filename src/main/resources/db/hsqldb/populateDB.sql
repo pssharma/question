@@ -11,4 +11,7 @@ INSERT INTO questions VALUES (9, 'poll', 'Who will win the Drivers world champio
 INSERT INTO questions VALUES (10, 'checkbox', 'Which driver(s) performance are you looking forward to see?', 8, NULL, 'Lewis Hamilton::Max vestrappen::Sebastian Vettel::Daniel Riccardo::Carlos Sainz::Kimi Riken::Charles Leclere::Lando Norris');
 
 
+INSERT INTO answers VALUES (1, 2, 3,  NULL, 'Lewis Hamilton::Max vestrappen');
+
+
 

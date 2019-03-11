@@ -101,7 +101,7 @@ public class AnswerController {
 			answerNew = new Answer(answer.getId(),answer.getQid(),answer.getUid(),answer.getUserAnswers(),"");
 			answerRepository.save(answerNew);
 		}*/
-		
+		answerRepository.save(answerNew);
 		return ResponseEntity
 				.created(linkTo(methodOn(AnswerController.class).one(answerNew.getId())).toUri())
 				.body(answerResourceAssembler.toResource(answerNew));
