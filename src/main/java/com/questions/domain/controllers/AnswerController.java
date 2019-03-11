@@ -1,0 +1,105 @@
+package com.questions.domain.controllers;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.transaction.Status;
+
+import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.ResourceSupport;
+import org.springframework.hateoas.Resources;
+import org.springframework.hateoas.VndErrors;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.questions.domain.Exceptions.AnswerNotFoundException;
+import com.questions.domain.api.Answer;
+import com.questions.domain.api.Question;
+import com.questions.domain.repositories.AnswerRepository;
+import com.questions.domain.repositories.QuestionRepository;
+import com.questions.domain.util.AnswerResourceAssembler;
+
+
+
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+
+@RestController
+public class AnswerController {
+	
+	private final AnswerRepository answerRepository;
+	private final QuestionRepository questionRepository;
+	private final AnswerResourceAssembler answerResourceAssembler;
+	public AnswerController(AnswerRepository answerRepository, AnswerResourceAssembler answerResourceAssembler,QuestionRepository questionRepository) {
+	
+		this.answerRepository = answerRepository;
+		this.answerResourceAssembler = answerResourceAssembler;
+		this.questionRepository = questionRepository;
+	}
+	
+	//check for duplicates with qid and uid
+	
+	@GetMapping("/answers")
+	public Resources<Resource<Answer>> all() {
+
+		List<Resource<Answer>> Answers = answerRepository.findAll().stream()
+			.map(answerResourceAssembler::toResource)
+			.collect(Collectors.toList());
+
+		return new Resources<>(Answers,
+			linkTo(methodOn(AnswerController.class).all()).withSelfRel());
+	}
+
+	@GetMapping("/answers/{id}")
+	public Resource<Answer> one(@PathVariable Long id) {
+		return answerResourceAssembler.toResource(
+			answerRepository.findById(id)
+				.orElseThrow(() -> new AnswerNotFoundException(id)));
+	}
+
+	@PostMapping("/answers")
+	public ResponseEntity<Resource<Answer>> newAnswer(@RequestBody Answer answer) {
+
+	
+		Answer newAnswer = answerRepository.save(answer);
+		boolean correctAnswer = false;
+		//checking if the answer is for trivia.
+		Question question = questionRepository.getOne(newAnswer.getQuestion().getId());
+		if(question.getType().equals("trivia")) {
+			//assuming we will filter only one option for trivia on frontend
+			if(answer.getUserAnswers().get(0).equalsIgnoreCase(question.getAnswer())) {
+				correctAnswer = true;
+			}
+		}
+
+		return ResponseEntity
+			.created(linkTo(methodOn(AnswerController.class).one(newAnswer.getId())).toUri())
+			//.body(answerResourceAssembler.toResource(newAnswer))
+			.body("");
+		
+	}
+	
+	@PutMapping("/answers/{id}/submit")
+	ResponseEntity<ResourceSupport> submit(@PathVariable Long id) {
+
+		 Answer answer = answerRepository.findById(id).orElseThrow(() -> new AnswerNotFoundException(id));
+ //logging for updating
+			
+				
+				return ResponseEntity.ok(answerResourceAssembler.toResource(answerRepository.save(answer)));
+			
+
+			return ResponseEntity
+				.status(HttpStatus.METHOD_NOT_ALLOWED)
+				.body(new VndErrors.VndError("Method not allowed", "You can't complete the submission that is in the " + answer.getStatus() + " status"));
+	}
+	
+	
+
+}
