@@ -19,7 +19,7 @@ You can then access petclinic here: http://localhost:8080/questions/ through Pos
 ## Database configuration
 
 In its default configuration, this application uses an in-memory database (HSQLDB) which
-gets populated at startup with data.
+gets populated at startup with data. 
 
 
 ## Working with Petclinic in Eclipse/STS
@@ -64,6 +64,8 @@ File -> Import -> Maven -> Existing Maven project
 * Options have been stored as string in DB, in agreement with ACID complaince. But are separated with unique string pattern (::) and assumed with be processed in frontend.
 * Answers are stored in similar way in the background
 * Since REST is stateless it was hard to implement unique question generator on backend. But if Oauth is assumed to be implemented, this would be easier to implement.
+* API returns Foreign key constarint (500) and key not found errors (404). So client is assumed to implement logic to convey it to end user.
+
 
 ## Scalability
 
